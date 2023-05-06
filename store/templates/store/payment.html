@@ -1,0 +1,123 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+	<div class="col-lg-6">
+		<div class="box-element" id="form-wrapper">
+               <form id="form">
+                    <div id="shipping-info" method="post" >
+                         <hr>
+                         <p>Shipping Information:</p>
+                         <hr>
+                         <div class="form-field">
+                              <input class="form-control" type="text" name="address" placeholder="Address..">
+                         </div>
+                         <div class="form-field">
+                              <input class="form-control" type="text" name="city" placeholder="City..">
+                         </div>
+                         <div class="form-field">
+                              <input class="form-control" type="text" name="pays" placeholder="State..">
+                         </div>
+                         <div class="form-field">
+                              <input class="form-control" type="text" name="zipcode" placeholder="Zip code..">
+                         </div>
+                         <div class="form-field">
+                              <input class="form-control" type="text" name="tel" placeholder="phone number..">
+                         </div>
+                    </div>
+                    <hr>
+                    <input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
+               </form>
+		</div>
+          <br>
+          <div class="box-element hidden" id="payment-info">
+	          <div class="form-field">
+                    <label for="cardholder">Cardholder Name</label>
+                    <input type="text" id="cardholder" name="cardholder" class="form-control" required>
+                </div>
+                <div class="form-field">
+                    <label for="cardnumber">Card Number</label>
+                    <input type="text" id="cardnumber" name="cardnumber" class="form-control" required>
+                </div>
+                <div class="form-field">
+                    <label for="expiry">Expiration Date</label>
+                    <input type="text" id="expiry" name="expiry" class="form-control" required>
+                </div>
+                <div class="form-field">
+                    <label for="cvc">CVC</label>
+                    <input type="text" id="cvc" name="cvc" class="form-control" required>
+                </div>
+                <hr>
+                <button id="pay-now" class="btn btn-success btn-block" >Pay Now</button>                
+          </div>
+	</div>
+     <div class="col-lg-6">
+		<div class="box-element">
+               <a  class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Back to Cart</a>
+	<hr>
+	<h3>Order Summary</h3>
+	<hr>
+     {% for item in items %}
+	<div class="cart-row">
+		<div style="flex:2"><img class="row-image" src="{{ item.product.imageURL }}"></div>
+		<div style="flex:2"><p>{{ item.product.name}}</p></div>
+		<div style="flex:1"><p>{{ item.product.price|floatformat:2}}</p></div>
+		<div style="flex:1"><p>x{{ item.quantity }}</p></div>
+	</div>
+     {% endfor %}
+	<h5>Items:   {{ order.get_item_total}}</h5>
+	<h5>Total:   ${{ order.get_cart_total }}</h5>
+	</div>
+	</div>
+
+     </div>
+     <script type="text/javascript">
+          var total = '{{order.get_cart_total}}'
+          var form = document.getElementById('form')
+          form.addEventListener('submit',function(e){
+               e.preventDefault()
+               console.log('Form subbmitted')
+               document.getElementById('form-button').classList.add('hidden')
+               document.getElementById('payment-info').classList.remove('hidden')
+          })
+          document.getElementById('pay-now').addEventListener('click',function(e){
+               submitFormData()
+          })
+          function submitFormData(){
+               console.log("pay now clicked")
+
+               var shippingInfo = {
+                    'total':total,
+                    'address':null,
+                    'city':null,
+                    'pays':null,
+                    'zipcode':null,
+                    'tel':null,
+               }
+               shippingInfo.address= form.address.value
+               shippingInfo.city= form.city.value
+               shippingInfo.pays= form.pays.value
+               shippingInfo.zipcode= form.zipcode.value
+               shippingInfo.tel= form.tel.value
+
+               var url = '/process_order/'
+               fetch(url, {
+               method:'POST',
+               headers:{
+                    'Content-Type':'application/json',
+                    'X-CSRFToken':csrftoken,
+               },
+                    body:JSON.stringify({'shipping':shippingInfo})
+               })
+               .then((response) => {
+                    return response.json();
+               })
+               .then((data) => {
+                    console.log('succes:',data);
+                    alert('transaction completed ');
+                    window.location.href = "{% url 'storeH' %}";
+          });
+     }
+         
+     </script>
+{% endblock content %}

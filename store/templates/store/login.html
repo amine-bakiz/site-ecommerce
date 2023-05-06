@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+{% load static %}
+{% block content %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+  <title>Document</title>
+</head>
+<body>
+  <div class="wrapper bg-white">
+    <div class="h2 text-center">ECCOMERCE</div>
+    <div class="h4 text-muted text-center pt-2">Enter your login details</div>
+    <form class="pt-3" method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+        <div class="form-group py-2">
+            <div class="input-field"> <span class="far fa-user p-2"></span> <input type="text" placeholder="Username or Email Address" name="username" required class=""> </div>
+        </div>
+        <div class="form-group py-1 pb-2">
+            <div class="input-field"> <span class="fas fa-lock p-2"></span> <input type="text" placeholder="Enter your Password" name= "password" required class=""> <button class="btn bg-white text-muted"> <span class="far fa-eye-slash"></span> </button> </div>
+        </div>
+        <div class="d-flex align-items-start">
+            <div class="remember"> <label class="option text-muted"> Remember me <input type="radio" name="radio"> <span class="checkmark"></span> </label> </div>
+            <div class="ml-auto"> <a href="" id="forgot">Forgot Password?</a> </div>
+        </div> <button class="btn btn-block btn-lg btn-primary my-3"  type="submit">Log in</button>
+
+        <div class="text-center pt-3 text-muted">Not a member? <a href="{% url 'signup' %}">Sign up</a></div>
+    </form>
+  </div>
+
+
+
+{% endblock content %}
+</body>
+</html>
